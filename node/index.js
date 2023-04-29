@@ -7,11 +7,10 @@ dotenv.config();
 const app = express();
 const port = 5002;
 
-
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
 });
-const supabaseUrl = 'https://socmnjxppqyhrcpsqacw.supabase.co';
+const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const openai = new OpenAIApi(configuration);
 supabase = createClient(supabaseUrl, supabaseKey);
@@ -36,6 +35,10 @@ const client = new Client({
         GatewayIntentBits.MessageContent,
     ]
 });
+
+//your co and bot name here
+let companyName = '';
+let botName = '';
 
 
 async function getDocsKNN(embeddedUserQuestion) {
@@ -70,11 +73,6 @@ async function embedUserQuestion(userQuestion) {
     return embeddingResponse.data.data[0].embedding;
 }
 
-
-// app.get('/', (req, res) => {
-//     res.send('Hello World!');
-// });
-
 client.login(process.env.DISCORD_TOKEN);
 
 const btn = new ButtonBuilder()
@@ -86,7 +84,7 @@ client.on('messageCreate', async (message) => {
 
     const channel = client.channels.cache.get(message.channelId);
 
-    if (message.mentions.users.first() !== undefined && message.mentions.users.first().bot === true && message.mentions.users.first().username === 'GPT Genie') {
+    if (message.mentions.users.first() !== undefined && message.mentions.users.first().bot === true && message.mentions.users.first().username === `${botName}`) {
 
         const embeddedUserInput = await embedUserQuestion(
             `
@@ -102,7 +100,7 @@ client.on('messageCreate', async (message) => {
         const response = await openai.createChatCompletion({
             model: "gpt-3.5-turbo",
             messages: [
-                {"role": "system", "content": "You are an honest, helpful assistant working on behalf of Superfluid protocol. If you do not know for certain what the answer to a question is, your mandate is to say that you do not know. Your job is also to actually provide the code snippet when you say you have a code snippet"},
+                {"role": "system", "content": `You are an honest, helpful assistant working on behalf of ${companyName}. If you do not know for certain what the answer to a question is, your mandate is to say that you do not know. Your job is also to actually provide the code snippet when you say you have a code snippet`},
                 {"role": "user", "content": `Context #1: `},
                 {"role": "assistant", "content": `${docsContext1}`},
                 {"role": "user", "content": `Context #2: `},
