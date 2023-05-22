@@ -1,0 +1,7 @@
+version: '3'
+services:
+  superfluid-discord-bot:
+    image: saflamini/superfluid-discord-bot
+    ports:
+      - '49160:5020'
+    restart: always
