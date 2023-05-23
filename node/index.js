@@ -37,7 +37,7 @@ const client = new Client({
 
 //your co and bot name here
 let companyName = 'Superfluid Protocol';
-let botName = 'GPT Genie';
+let botName = 'Superfluid GPT';
 
 
 async function getDocsKNN(embeddedUserQuestion) {
